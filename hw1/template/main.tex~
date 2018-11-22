@@ -1,0 +1,222 @@
+\documentclass[12pt]{report}
+\usepackage{scribe,graphicx,graphics}
+\usepackage{amssymb}
+
+\course{MIT 9.520/6.860} 	
+\coursetitle{Statistical Learning Theory and Applications}	
+\semester{Fall 2018}
+\lecturer{} % Due Date: {\bf Sat, Sept 29 2018}}
+\lecturetitle{Problem Set}
+\lecturenumber{1}   
+\lecturedate{}    
+
+
+% Insert your name here!
+\scribe{Student Name: Sebastiani Aguirre-Navarro}
+
+\begin{document}
+
+
+\maketitle
+
+\paragraph{Problem 1}
+Fixing $f(x)$ in the loss function and then minimizing the inner integral with respect to this fixed value can give us the target function.
+\begin{enumerate}
+\item Exponential Loss
+  
+  Let $l(-yf(x)) = exp(-yf(x))$, then
+  then the target function that minimizes:
+  $$\min_{f}\int_{y \sim p(y | x)} exp(-yf) p(y|x)dy$$
+  Then
+  $$0 = \frac{\partial}{\partial f}\left[\int_{y \sim p(y|x)} exp(-yf)p(y|x)dy\right] $$
+  Then
+  $$0 = \int_{y \sim p(y|x)} -yexp(-yf)p(y|x)dy $$
+  However, $y \in \{ -1, +1 \}$
+  $$0 = exp(f)p(-1|x) - exp(-f)p(1|x) $$
+  And $p(-1|x) = 1 - p(1|x)$
+  $$0 = exp(f)(1-p(y|x)) - exp(-f)p(1|x) $$
+  \begin{equation}
+    \begin{aligned}
+      & exp(f)(1-p(1|x)) = exp(-f)p(1|x)\\
+      & \frac{exp(f)}{exp(-f)} = \frac{p(1|x)}{1-p(1|x)} \\
+      & ln(exp(2f)) = ln\left(\frac{p(1|x)}{1 - p(1|x)}\right) \\
+    \end{aligned}
+  \end{equation}
+  The target function is then
+  $$ f^{*} = \frac{1}{2}ln\left(\frac{p(1|x)}{1-p(1|x)}\right) $$
+  
+\item Logistic Loss
+  
+  Let $l(-yf(x)) = log(1+ exp(-yf(x)))$
+  Then
+  \begin{equation}
+    \begin{aligned}
+      & \min_{f} \int_{y \sim p(y | x)} log(1 + exp(-yf))p(y|x)dy \\
+      & 0 = \frac{\partial}{\partial f} \int_{y \sim p(y|x)} log(1 + exp(-yf))p(y|x)dy \\
+      & 0 = \int_{y \sim p(y|x)} \frac{-y exp(-yf)}{1 + exp(-yf)} p(y|x)dy \\
+      & 0 = \frac{exp(f)}{1 + exp(f)}p(-1|x)  - \frac{exp(-f)}{1 + exp(-f)}p(1|x) \\
+      & 0 = \frac{1}{1+exp(-f)}(1 - p(1|x)) - \frac{1}{1+exp(f)}p(1|x) \\
+      & \frac{p(1|x)}{1 - p(1|x)} = \frac{1+exp(f)}{1+exp(-f)} \\
+      & ln\left(\frac{p(1|x)}{1 - p(1|x)}\right) = ln(1+exp(f)) - ln(1+exp(f)) + ln(exp(f))
+    \end{aligned}
+  \end{equation}
+  The target function is then
+  $$ f^{*} = ln\left(\frac{p(1|x)}{1 - p(1|x)}\right) $$
+
+\item Hinge Loss
+  
+  Let $l(-yf(x)) = \left| 1 - yf(x) \right|$
+  \begin{equation}
+    \begin{aligned}
+      & \min_{f} \int_{y \sim p(1|x)} \left| 1 - yf \right| p(y|x)dy \\
+      & = \min_{f} \left|1 - f \right|_{+} p(1|x) + \left|1 + f \right|_{+} p(-1|x) \\
+      & = \min_{f} \left[ max\{1-f, 0\}p(1|x) + max\{1+f, 0\}p(-1|x)\right]
+    \end{aligned}
+  \end{equation}
+  If $p(1|x) > p(-1|x)$, then $f \geq 1$ such that the term $p(1|x)$ vanishes and only $p(-1|x)$ remains.
+  
+  If $p(-1|x) > p(1|x)$, then $f \leq -1$ such that the term $p(-1 | x)$ vanishes and only $p(+1|x)$ remains.
+  
+  Therefore, $f^{*} = p(1|x) - p(-1|x)$
+
+\item Missclassification Loss
+  
+  In this case, we now try to find the function $c(x) : X \mapsto \{-1, +1\}$. Let now the
+  loss function be
+  \begin{equation}
+    \theta(-yc(x)) = 
+    \begin{cases}
+      \text{1} & -yc(x) < 0 \\
+      \text{0} & -yc(x) > 0   
+    \end{cases}
+  \end{equation}
+  Then the minimization problem is
+  \begin{equation}
+    \begin{aligned}
+      & \min_{f} \int_{y \sim p(y|x)} \theta(-yc(x))p(y|x)dy  \\
+      & = \min_{f} \theta(-f)p(1|x) + \theta(f)p(-1|x) \\
+    \end{aligned}
+  \end{equation}
+  following the same argument as above,
+  
+  if $p(1|x) > p(-1|x)$, then $f^{*} > 0$
+  
+  if $p(1|x) < p(-1|x)$, then $f^{*} < 0$
+  
+  then it follows that $c(x) = sign(p(1|x) - p(-1|x)) $
+\end{enumerate}
+
+The relationship between the target functions of the surrogate loss functions and the target
+function for the missclassification loss relate in that if you take the sign function from the surrogate ones, you can convert them into the same nature as the missclassification target function. In the case of the Hinge Loss, it gives you the same relationship between the class conditional probabilities as the missclassification loss. 
+
+\paragraph{Problem 2}
+Let the solution be expressed as $w = w_{n} + w_{n}^{\bot}$(the sum of a particular solution and a null solution), with $w_{n}w_{n}^{\bot} = 0$ an that $w_{n} = \sum^{d}_{i}c_{i}x_{i}$.  It follows from these supossisions that
+$$ w_{n}w_{n}^{\bot} = \sum^{d}_{i}c_{i}x_{i}^{T}w_{n}^{\bot}= 0$$ which implies that $x_{i} \bot w_{n}^{\bot}, \forall x_{i} \in (x_{i}, y_{i})^{N}_{i=1}$. Now consider let us consider the empirical risk minimization problem
+$$\min_{w \in \mathcal{R}} \frac{1}{n} \sum^{n}_{i=1}(y_{i} - w^{T}x_{i})^{2} + \lambda \lvert \lvert w \rvert \rvert^{2}$$ Then
+\begin{equation}
+  \begin{aligned}
+    & \min_{w \in \mathcal{R}} \frac{1}{n} \sum^{N}_{i=1} (y_{i} - (w_{n}+w^{\bot}_{n})^{T}x_{i})^{2} + \lambda \lvert \lvert w_{n}+w^{\bot}_{n} \rvert \rvert^{2} \\
+    = & \min_{w \in \mathcal{R}} \frac{1}{n} \sum^{N}_{i=1} (y_{i} - w_{n}^{T}x_{i} +w^{\bot, T}_{n}x_{i})^{2} + \lambda \lvert \lvert w_{n}+w^{\bot}_{n} \rvert \rvert^{2} \\
+    = & \min_{w \in \mathcal{R}} \frac{1}{n} \sum^{N}_{i=1} (y_{i} - w_{n}^{T}x_{i})^{2} + \lambda \lvert \lvert w_{n}+w^{\bot}_{n} \rvert \rvert^{2} 
+  \end{aligned}
+\end{equation}
+That last step is by using the fact that $x_{i} \bot w_{n}^{\bot}$. The norm reduces to
+$$ \lambda (w_{n}^{T} + w_{n}^{\bot, T})(w_{n} + w_{n}^{\bot}) = \lambda(w_{n}^{T}w_{n} + 2w_{n}^{T}w_{n}^{\bot}+w_{n}^{\bot, T}w_{n}^{\bot})$$
+Since $w_{n}w_{n}^{\bot} = 0$, this reduces to $ \lambda \lvert \lvert w_{n} \rvert \rvert^{2} + \lambda \lvert \lvert w_{n}^{\bot} \rvert \rvert^{2} $. Since the empirical risk does not depend directly on $w_{n}^{\bot}$ and $\lambda > 0$, then minimization occurrs if $\lvert \lvert w_{n}^{\bot} \rvert \rvert^{2} = 0$. Because $w_{n}$ is the solution of this minimization problem, it follows that $w = \sum^{N}_{i=1} c_{i} x_{i}$.
+
+2.2
+
+Let the suppositions be the same as before. Let us consider the risk minimization problem
+$$ \min_{w \in \mathcal{R}^{d}} \frac{1}{n} \sum^{N}_{i=1} l(y_{i}, w^{T}x_{i}) + \lambda \lvert \lvert w \rvert \rvert^{2} $$
+Where $l(y_{i}, w^{T}x_{i})$ is any convex loss function. We can express this ERM as:
+$$\min_{w \in \mathcal{R}^{d}} \frac{1}{n} \sum^{N}_{i=1} l(y_{i}, (w_{n}+w^{\bot}_{n})^{T}x_{i}) + \lambda \lvert \lvert w_{n} \rvert \rvert^{2} + \lambda \lvert \lvert w_{n}^{\bot} \rvert \rvert^{2} $$
+However, as proved before, $x_{i} \bot w_{n}^{\bot}, \forall x_{i} \in \{(x_{i}, y_{i})\}_{i=1}^{N}$, then
+$$\min_{w \in \mathcal{R}^{d}} \frac{1}{n} \sum^{N}_{i=1} l(y_{i}, w_{n}^{T}x_{i}) + \lambda \lvert \lvert w_{n} \rvert \rvert^{2} + \lambda \lvert \lvert w_{n}^{\bot} \rvert \rvert^{2} $$
+Again, this implies that $\lambda \lvert \lvert w_{n}^{\bot} \rvert \rvert^{2} = 0$, since $\lambda > 0$.
+Therefore, since the problem depends explicitly on $w_{n}$, the $w$ that solves this problem can be written in the form $w = \sum^{N}_{i=1} c_{i}x_{i}$.
+
+2.3
+
+Let the loss function be the logistic function. Using $w = \sum^{N}_{i=1} c_{i}x_{i}$, the risk minimization problem is
+\begin{equation}
+  \begin{aligned}
+    & \min_{c_{j}} \frac{1}{n} \sum^{N}_{i=1}log(1 + exp(-y_{i} \sum^{N}_{j=1}x_{j}^{T}x_{i}c_{j})) + \lambda \sum^{N}_{j=1} \sum^{N}_{i=1} x_{j}^{T}x_{i}c_{j}c_{i} \\
+    = & \frac{\partial}{\partial c_{j}} \left[ \frac{1}{n} \sum^{N}_{i=1} log(1 + exp(-y_{i} \sum^{N}_{j=1} x^{T}_{j}x_{i}c_{j})) + \lambda \sum^{N}_{j=1} \sum^{N}_{i=1} x_{j}^{T}x_{i}c_{j}c_{i} \right] \\
+    = & frac{1}{n} \sum^{N}_{i=1} \frac{-y_{i}x^{T}_{i}x_{j}exp(-y_{i} \sum^{N}_{j=1}x_{j}^{T}x_{i}c_{j})}{1+exp(-y_{i}\sum^{N}_{j=1}x_{j}x_{i}c_{j})} + \lambda \sum^{N}_{j=1} \sum^{N}_{i=1} x_{j}^{T}x_{i}c_{i} \\
+    = & \frac{1}{n} \sum^{n}_{i=1} \frac{-y_{i}x_{j}^{T}x_{j}}{1 + exp(y_{i}\sum^{n}_{i} x_{j}^{T}x_{i}c_{j})} + \lambda \sum^{N}_{i}x_{j}^{T}x_{i}c_{i} \\
+    = & \frac{1}{n} \sum^{n}_{i} \frac{-y_{i} x_{j}^{T} x_{i}}{1 + exp(y_{i} \sum^{n}_{i}x_{j}^{T}x_{i}c_{j})} + \lambda x_{j}^{T}x_{i}c_{i} \\
+    = & \frac{1}{n} x^{T}\left[ \sum^{n}_{i} \left( \frac{-y_{i}}{1+exp(y_{i}\sum^{n}_{j}x_{j}x_{i}c_{j})} + \lambda c_{i} \right)x_{i}\right]
+  \end{aligned}
+\end{equation}  
+\paragraph{Problem 3}
+3.1
+
+Let $w^{*}$ be the solution that minimizes the loss function with a constant bias $b$ as described
+in the problem. Let us consider:
+$$L^{c}(w) = \frac{1}{n} \sum^{n}_{i=1}(\langle w, x^{i}_{c}\rangle - y^{i}_{c})^{2} + \lambda \lvert\lvert w \rvert\rvert^{2} $$
+Where $x_{c} = x_{i} - \bar{x}$ and $y_{c} = y_{i} - \bar{y}$. Evaluating $L^{c}(w)$ at $w^{*}$, we obtain
+\begin{equation}
+  \begin{aligned}
+    L^{c}(w^{*}) & = \frac{1}{n} \sum^{n}_{i=1}(\langle w^{*}, x_{i} - \bar{x} \rangle - y_{i} - \bar{y})^{2} + \lambda \lvert\lvert w \rvert\rvert^{2} \\
+    & = \frac{1}{n} \sum^{n}_{i=1}(\langle w^{*}, x_{i} \rangle - \langle w^{*}, \bar{x} \rangle - y_{i} + \bar{y})^{2} + \lambda \lvert\lvert w \rvert\rvert^{2} \\
+    & = \frac{1}{n} \sum^{n}_{i=1}(\langle w^{*}, x_{i}\rangle + (\bar{y} - \langle w^{*}, \bar{x}\rangle) - y_{i} )^{2} + \lambda \lvert\lvert w \rvert\rvert^{2}
+  \end{aligned}
+\end{equation}
+
+because $w^{*}$ is a fixed point, and $\bar{y}$, $\bar{x}$ are constants, then $\bar{y} - \langle w^{*}, \bar{x} \rangle$ is also constant, then the above expression is equal to
+$$L(w) = \frac{1}{n} \sum^{n}_{i=1}(\langle w, x_{i}\rangle +b - y_{i})^{2} + \lambda \lvert\lvert w \rvert\rvert^{2} $$
+Which is the original loss function that $w^{*}$ solves. Therefore, $w^{*}$ solves $L^{c}(w)$.
+
+3.2
+$$ \min_{w \in \mathbb{R}^{d}, b \in \mathbb{R}} \{ \frac{1}{n} \sum^{n}_{i=1}(\langle w, x_{i}\rangle +b - y_{i})^{2} + \lambda \lvert\lvert w \rvert\rvert^{2} \} $$
+Then, differentiating with respect to $b$
+\begin{equation}
+  \begin{aligned}
+    0 & = \frac{\partial}{\partial b} \left[\frac{1}{n} \sum^{n}_{i=1}(\langle w, x_{i}\rangle +b - y_{i})^{2} + \lambda \lvert\lvert w \rvert\rvert^{2} \right] \\
+    & = \frac{1}{n} \sum^{n}_{i=1} 2(\langle w, x_{i} \rangle + b^{*} - y_{i} ) \\
+    & = \frac{1}{n} \left[\sum^{n}_{i=1} (\langle w, x_{i} \rangle - y_{i} ) + nb^{*} \right] \\
+    b^{*} & = \bar{y} - \langle w, \bar{x} \rangle  
+  \end{aligned}
+\end{equation}
+
+Differentiating with respect to $w$
+\begin{equation}
+  \begin{aligned}
+    0 & = \frac{\partial}{\partial w} \left[\frac{1}{n} \sum^{n}_{i=1}(\langle w, x_{i}\rangle +b - y_{i})^{2} + \lambda \lvert\lvert w \rvert\rvert^{2} \right] \\
+    & = \frac{2}{n} \left[\sum^{n}_{i=1} (\langle w^{*}, x_{i} \rangle + b^{*} - y_{i} )x_{i} \right] + 2\lambda w^{*} \\
+    & = \frac{1}{n} \sum^{n}_{i=1} \langle w^{*}, x_{i} \rangle x_{i} + \frac{b}{n}\sum^{n}_{i=1} x_{i} -\frac{1}{n} \sum^{n}_{i=1} y_{i} x_{i} + \lambda w^{*} \\
+    \frac{1}{n}\sum^{n}_{i=1}x_{i} y_{i} - b^{*}\bar{x} & = \frac{1}{n} \sum^{n}_{i=1} \langle w^{*}, x_{i} \rangle x_{i} + \lambda w^{*} \\ 
+    w^{*} & = (\overline{xx^{T}} - \bar{x} \bar{x}^{T} + \lambda I_{d \times d} )^{-1}(\overline{xy} - \bar{y}\bar{x})
+  \end{aligned}
+\end{equation}
+Since $\overline{xx^{T}} - \bar{x} \bar{x}^{T}$ and $\overline{xy} - \bar{y}\bar{x}$ are just covariances, then
+$$ w^{*} = (X^{T}X + \lambda I_{d \times d})^{-1} X^{T}Y$$
+
+
+\paragraph{Problem 4}  
+4.1
+
+Let the distance between two points in $\mathcal{F}$ be
+$$ d_{k}(x, x') = \lvert \lvert \Phi (x) - \Phi (x') \rvert \rvert^{2} $$
+then
+\begin{equation}
+  \begin{aligned}
+    & = \left( \Phi (x) - \Phi (x') \right)^{T} \left( \Phi (x) - \Phi (x') \right) \\
+    & = \Phi (x)^{T} \Phi (x) + \Phi (x')^T \Phi (x') -2\Phi (x)\Phi (x')
+  \end{aligned}
+\end{equation}
+Since $\mathcal{F}$ is induced by a kernel, $K(x, x') = \langle \Phi (x), \Phi (x') \rangle$, then
+$$ d_{k}(x, x') = K(x,x) + K(x', x') -2K(x, x') $$
+Which means that to calculate the distance of two points in feature space, the explicit form of the feature map is not needed since it is in terms of the kernel.
+
+4.2
+
+Let ${(x_{i}, y_{i})}^{N}_{i=1}$, where $n_{+}$ is the number of $x_{i}$ that have label $y_{i} = +1$
+and $n_{-}$ is the number of $x_{i}$ that have label $y_{i} =-1$. Then the mean of the two classes are
+$$ \mu_{+1} = \frac{1}{n_{+}} \sum^{n_{+}}_{i=1} x_{i}$$
+$$ \mu_{-1} = \frac{1}{n_{-}} \sum^{n_{-}}_{i=1} x_{i}$$
+Using the definition of distance from the previous subproblem, then the rule would be
+$$c(x) = sign(d_{K}(x, \mu_{-1}) - d_{K}(x, \mu_{+1}))$$
+This rule assigns a test point $x$ the class whose mean is closest in feature space. If the test point is closest to class $-1$, then the subtraction is negative, and if it is closest to $+1$ then the subtraction is positive, thus assigning the appropriate labels.  
+\end{document}
+

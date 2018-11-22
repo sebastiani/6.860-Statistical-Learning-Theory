@@ -1,0 +1,154 @@
+\documentclass[12pt]{report}
+\usepackage{scribe,graphicx,graphics}
+
+\course{MIT 9.520/6.860} 	
+\coursetitle{Statistical Learning Theory and Applications}	
+\semester{Fall 2018}
+\lecturer{} % Due Date: {\bf Sat, Sept 29 2018}}
+\lecturetitle{Problem Set}
+\lecturenumber{2}   
+\lecturedate{}    
+
+
+% Insert your name here!
+\scribe{Student Name: Sebastiani Aguirre-Navarro}
+
+\begin{document}
+
+
+\maketitle
+
+\paragraph{Problem 1}
+
+1.1
+
+Using the symmetrization lemma
+$$ \mathop{\mathbb{E}} \max_{f \in \mathcal{F}} \big[ \mathop{\mathbb{E}}f(x) - \frac{1}{n} \sum^{n}_{i=1} f(x_{i}) \big] \leq 2 \mathop{\mathbb{E}} \hat{R}_{n}(\mathcal{F} \rvert_{x1:n}) $$
+
+In this case $\mathcal{F} \lvert_{x1:n}$ is finite, since we are conditioning on n x-vectors. Then
+$$ 2 \mathop{\mathbb{E}}\hat{R}_{n}(\mathcal{F} \rvert_{x1:n}) = 2 \mathop{\mathbb{E}} \max_{f \in \mathcal{F}} \frac{1}{n} \sum^{n}_{i=1} \epsilon_{i}f(x_{i}) $$
+Using Massart's lemma, $\mathop{\mathbb{E}} \big[ \max_{f \in \mathcal{F}} \sum^{n}_{i=1}\epsilon_{i}f(x_{i})\big] \leq r \sqrt{2\log \lvert \mathcal{F} \rvert}$
+where $r = \max_{f \in \mathcal{F}} \lvert \lvert f \rvert \rvert_{2}$, but $\mathcal{F}$ is a class of indicator functions which are binary vectors so $r = \sqrt{n}$. Then,
+$$ \frac{2}{n} \sqrt{n} \sqrt{2 \log \lvert \mathcal{F} \rvert} = c \sqrt{\frac{\log \lvert \mathcal{F}\rvert_{x1:n} \rvert}{n}} $$
+
+The cardinality of $\mathcal{F}\rvert_{x1:n}$ is n vectors, so
+$$ \mathop{\mathbb{E}} \max_{f \in \mathcal{F}} \big[ \mathop{\mathbb{E}} - \frac{1}{n}\sum^{n}_{i=1}f(x_{i}) \big] \leq c \sqrt{\frac{\log n}{n}} $$
+with $c = 2\sqrt{2} $
+
+1.2
+
+With $l(f(x), y) = \mathbb{I}\{f(x) \neq y\} = \frac{1 - f(x_{i})y_{i}}{2}$, then,
+$$2 \mathop{\mathbb{E}} \max_{g \in l \circ \mathcal{F}} \frac{1}{n} \sum^{n}_{i=1}\epsilon_{i}\frac{(1 - f(x_{i})y_{i})}{2} $$
+But $(1 - f(x_{i})y_{i})$ is binary valued between 0 and 2, therefore the same result can be obtained $\sqrt{2} \sqrt{\frac{\log n}{n}}$
+Hence the difference is a 2 between the two Rademacher averages.
+
+1.3
+With $\hat{f}_{n}$ as the solution of the ERM, we can study the bounds of $\mathop{\mathbb{E}}L(\hat{f}_{n}) - \hat{L}(f_{\mathcal{F}})$ whose Rademacher averages we calculated. Because we are using the solution
+of the ERM and the Bayes optimal function $f_{\mathcal{F}}$ then $\epsilon$ will be greater than the bound only when:
+\begin{equation}
+  \begin{aligned}
+    c \sqrt{\frac{\log n}{n}} & \leq \epsilon \\
+    \sqrt{\frac{\log n}{n}} & \leq \epsilon \\ 
+    \frac{\log n}{n} & \leq \epsilon^{2} \\
+  \end{aligned}
+\end{equation}
+Ignoring log factors, $n \geq \mathcal{O}(\epsilon^{-2})$
+
+1.4
+
+Let $p \geq 1$, $B^{n}_{p} = {x \in \mathbb{\hat{R}}^{n} : \lvert \lvert x \rvert \rvert_{p} \leq 1} $
+Using the definition of the dual norm, we have
+\begin{equation}
+  \begin{aligned}
+    n \mathbb{\hat{R}}(B^{n}_{p}) & = \mathop{\mathbb{E}} \max_{\lvert \lvert x \rvert \rvert \leq_{p} 1}\langle \epsilon,x \rangle \\
+    & = \mathop{\mathbb{E}}\lvert \lvert \epsilon \rvert \rvert_{p} \\
+    & = \mathop{\mathbb{E}}(\lvert \lvert \epsilon \rvert \rvert_{p}^{p})^{\frac{1}{p}} \\
+    & \leq (\mathop{\mathbb{E}}\lvert \lvert \epsilon \rvert \rvert_{p}^{p})^{\frac{1}{p}} \\
+  \end{aligned}
+\end{equation}
+Because $\epsilon$ takes values $\pm 1$, then $\mathop{\mathbb{E}}(\lvert \lvert \epsilon \rvert \rvert_{p}^{p})^{\frac{1}{p}} \approx  n^{\frac{1}{p}}$ then
+\begin{equation}
+  \begin{aligned}
+    \mathbb{\hat{R}}(B^{n}_{p}) & \approx \frac{n^{\frac{1}{p}}}{n} \\
+    & = \mathcal{O}(n^{-\frac{1}{p}}) \\
+  \end{aligned}
+\end{equation}
+
+1.5
+
+Using the convexity of $\max$, then
+$$ \hat{R}(G) = \mathop{\mathbb{E}}_{\epsilon1:n} \max_{g \in G} \frac{1}{n} \sum^{n}_{i=1}\epsilon_{i}g_{i}$$
+Because $\max$ is a convex function, we can use Jensen's Inequality. Then,
+\begin{equation}
+  \begin{aligned}
+    \mathop{\mathbb{E}}_{\epsilon1:n} \max_{g \in G} \frac{1}{n} \sum^{n}_{i=1} \epsilon_{i}g_{i} & \geq \max_{g \in G} \mathop{\mathbb{E}}_{\epsilon1:n} \frac{1}{n} \sum^{n}_{i=1} \epsilon_{i}g_{i} \\
+    & = \max_{g \in G} \frac{1}{n} \sum^{n}_{i=1} \mathop{\mathbb{E}}_{\epsilon1:n}\epsilon_{i}g_{i}
+  \end{aligned}
+\end{equation}
+But $\mathop{\mathbb{E}}_{\epsilon1:n}\epsilon_{i} = 0$. Therefore, $\hat{R}(G) \geq 0$, which is non-negative.
+
+1.6
+
+We start with the observation that $\hat{L}(\hat{f}_{n}) = \min_{f \in \mathcal{F}}\hat{L}(f)$.
+Then, using the property of concavity in Jensen's Inequality,
+\begin{equation}
+  \begin{aligned}
+    \mathop{\mathbb{E}_{\mathcal{S}}} \min_{f \in \mathcal{F}} \hat{L}(f) & \leq \min_{f \in \mathcal{F}} \mathop{\mathbb{E}_{\mathcal{S}}} \hat{L}(f) \\
+    & = \min_{f \in \mathcal{F}} L(f) \\
+    & = L(f_{\mathcal{F}}) \\
+  \end{aligned}
+\end{equation}
+\paragraph{Problem 2}
+1.2
+
+Let $\mathcal{X} = \mathcal{R}^{d}$, $\mathcal{Y} = [-M, M]$ and dataset of n points sampled from the distribution $P$, and $\mathcal{F} = {f_{1}, ..., f_{N}}$. Let $l$ represent the square loss. Let us consider the following convergence problem:
+$$P(\max_{f \in \mathcal{F}} \lvert \mathop{\mathbb{E}}l(f(X), Y) - \frac{1}{n}\sum^{n}_{i=1}l(f(x_{i}, y_{i}) \rvert \geq \epsilon)$$
+
+In order to calculate the bound of the $f$ that maximizes the difference, we need to consider every function $f \in \mathcal{F}$. This is the probability of the union of this inquality for each function in $\mathcal{F}$. Using the Union Bound Inequality and Hoeffding's Inequality, we obtain then obtain the upper bound,
+\begin{equation}
+  \begin{aligned}
+    P(\max_{f \in \mathcal{F}} \lvert \mathop{\mathbb{E}}l(f(X), Y) - \frac{1}{n}\sum^{n}_{i=1}l(f(x_{i}, y_{i}) \rvert \geq \epsilon) & = P(\bigcup_{k=1}^{N} \lvert \mathop{\mathbb{E}}l(f_{k}(X), Y) - \frac{1}{n}\sum^{n}_{i=1}l(f_{k}(x_{i}), y_{i}) \rvert \geq \epsilon) \\
+    & \leq \sum^{N}_{i=1}P(\lvert \mathop{\mathbb{E}}l(f_{k}(X), Y) - \frac{1}{n}\sum^{n}_{i=1}l(f_{k}(x_{i}), y_{i}) \rvert \geq \epsilon) \\
+    & = 2N\exp\{-\frac{2n\epsilon^{2}}{(C-M)^{4}}\} \\
+  \end{aligned}
+\end{equation}
+
+Where the bounds of the loss function are determined by the fact that it is square loss, so it has to be greater or equal to zero, and the upper bound is determined when $\sup_{x \in X}\lvert f(x) \rvert \leq C$ and $y = M$ such that $l = (C-M)^{2}$.
+2.2
+
+We begin by finding an expression for $\epsilon$ using the bound calculated above,
+\begin{equation}
+  \begin{aligned}
+    \delta & = 2N\exp\{-\frac{2n\epsilon^{2}}{(C-M)^{4}}\} \\
+      \log \frac{\delta}{2N} &= - \frac{2n\epsilon^{2}}{(C-M)^{4}} \\
+      \epsilon &= \sqrt{\frac{(C-M)^{4}}{2n} \log \frac{2N}{\delta}} \\
+  \end{aligned}
+\end{equation}
+
+If $\delta$ is the probability that the max of the differnce is greater than $\epsilon$, then with probability $1-\delta$ we can say that the difference evaluated on the ERM solution will be less than or equal to $\epsilon$.
+\begin{equation}
+  \begin{aligned}
+    L(\hat{f}_{n}) - \hat{L}(\hat{f}_{n}) & \leq \epsilon(\delta, n, N)
+    L(\hat{f}_{n}) & \leq \hat{L}(\hat{f}_{n}) + \epsilon(\delta, n, N)
+  \end{aligned}
+\end{equation}
+Replacing $\epsilon$ for the one found above.
+
+2.3
+
+Let $\hat{f}_{n}$ be the ERM minimizer and $f_{\mathcal{F}}$ be the minimizer of the expected loss. Because of this, we note that $\hat{L}(f_{\mathcal{F}}) \geq \hat{L}(\hat{f}_{n})$. Then,
+\begin{equation}
+  \begin{aligned}
+    L(\hat{f}_{n}) & = L(\hat{f}_{n}) - \hat{L}(f_{\mathcal{F}}) + \hat{L}(f_{\mathcal{F}}) \\
+    & \leq (\hat{L}(f_{\mathcal{F}}) - \hat{L}(\hat{f}_{n}) + L(\hat{f}_{n}) - \hat{L}(f_{\mathcal{F}}) + \hat{L}(f_{\mathcal{F}}) \\
+    & \leq (\hat{L}(f_{\mathcal{F}}) - L(f_{\mathcal{F}})) + (L(\hat{f}_{n}) -\hat{L}(\hat{f}_{n})) + L(f_{\mathcal{F}}) \\
+    & \leq 2\max_{f \in \mathcal{F}}\lvert L(f) - \hat{L}(f) \rvert + L(f_{\mathcal{F}}) \\
+  \end{aligned}
+\end{equation}
+
+Therefore,
+$$ L(\hat{f}_{n}) - L(f_{\mathcal{F}}) \leq  2\max_{f \in \mathcal{F}}\lvert L(f) - \hat{L}(f) \rvert $$
+With probability of $1-\delta$, then we can conclude that
+$$ L(\hat{f}_{n}) - L(f_{\mathcal{F}}) \leq 2\epsilon(\delta, n, N) $$
+
+\end{document}

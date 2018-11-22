@@ -1,0 +1,45 @@
+\documentclass[12pt]{report}
+\usepackage{scribe,graphicx,graphics}
+
+\course{MIT 9.520/6.860} 	
+\coursetitle{Statistical Learning Theory and Applications}	
+\semester{Fall 2018}
+\lecturer{} % Due Date: {\bf Sat, Sept 29 2018}}
+\lecturetitle{Problem Set}
+\lecturenumber{2}   
+\lecturedate{}    
+
+
+% Insert your name here!
+\scribe{Student Name: Sebastiani Aguirre-Navarro}
+
+\begin{document}
+
+
+\maketitle
+
+\paragraph{Problem 1}
+
+1.1
+
+Using the symmetrization lemma
+$$ \mathop{\mathbb{E}} \max_{f \in \mathcal{F}} \big[ \mathop{\mathbb{E}}f(x) - \frac{1}{n} \sum^{n}_{i=1} f(x_{i}) \big] \leq 2 \mathop{\mathbb{E}} \hat{R}_{n}(\mathcal{F} \rvert_{x1:n}) $$
+
+In this case $\mathcal{F} \lvert_{x1:n}$ is finite, since we are conditioning on n x-vectors. Then
+$$ 2 \mathop{\mathbb{E}}\hat{R}_{n}(\mathcal{F} \rvert_{x1:n}) = 2 \mathop{\mathbb{E}} \max_{f \in \mathcal{F}} \frac{1}{n} \sum^{n}_{i=1} \epsilon_{i}f(x_{i}) $$
+Using Massart's lemma, $\mathop{\mathbb{E}} \big[ \max_{f \in \mathcal{F}} \sum^{n}_{i=1}\epsilon_{i}f(x_{i})\big] \leq r \sqrt{2\log \lvert \mathcal{F} \rvert}$
+where $r = \max_{f \in \mathcal{F}} \lvert \lvert f \rvert \rvert_{2}$, but $\mathcal{F}$ is a class of indicator functions which are binary vectors so $r = \sqrt{n}$. Then,
+$$ \frac{2}{n} \sqrt{n} \sqrt{2 \log \lvert \mathcal{F} \rvert} = c \sqrt{\frac{\log \lvert \mathcal{F}\rvert_{x1:n} \rvert}{n}} $$
+
+The cardinality of $\mathcal{F}\rvert_{x1:n}$ is n vectors, so
+$$ \mathop{\mathbb{E}} \max_{f \in \mathcal{F}} \big[ \mathop{\mathbb{E}} - \frac{1}{n}\sum^{n}_{i=1}f(x_{i}) \big] \leq c \sqrt{\frac{\log n}{n}} $$
+with $c = 2\sqrt{2} $
+
+1.2
+
+With $l(f(x), y) = \mathbb{I}\{f(x) \neq y\}$
+\paragraph{Problem 2}
+
+\paragraph{Problem 3}
+
+\end{document}
